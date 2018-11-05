@@ -1,1 +1,47 @@
 # TESTRielta
+
+	    LIST	p=12F510
+	    __CONFIG	03FF1H
+STATUS	    equ		03h
+GPIO	    equ		06h
+TRISGPIO    equ		06h
+d1	    equ		0Ah
+d2	    equ		0Bh
+d3	    equ		0Ch
+	    org 0
+	    clrf	GPIO
+	    bsf		STATUS,5
+	    bcf		TRISGPIO,0
+	    bcf		STATUS,5
+BTN1	    btfss	GPIO,1	    ; Проверяем кнопку
+	    goto	BTN1
+	    bsf		GPIO,0	    ; Включаем светодиод при нажитии
+BTN2	    btfss	GPIO,1	    ; Проверяем кнопку
+	    goto	BTN2
+BTN3	    bsf		GPIO,0	    ; Мерцание светодиода
+	    call	DELAY	    
+	    bcf		GPIO,0
+	    call	DELAY
+	    btfss	GPIO,1	    ; Проверяем кнопку
+	    goto	BTN3
+	    bcf		GPIO,0	    ; Выключаем светодиод
+BACK	    goto	BTN1	    ; Возвращаемся к первому нажатию
+			
+DELAY	    movlw	0x03	    ; Код задежки
+	    movwf	d1
+	    movlw	0x18
+	    movwf	d2
+	    movlw	0x02
+	    movwf	d3
+Delay_0	    decfsz	d1, f
+	    goto	$+2
+	    decfsz	d2, f
+	    goto	$+2
+	    decfsz	d3, f
+	    goto	Delay_0
+	    goto	$+1
+	    goto	$+1
+	    goto	$+1
+	    return
+	    end
+	    
